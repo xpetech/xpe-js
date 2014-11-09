@@ -61,8 +61,10 @@ XPE.bus = function() {
                         ev[cb].apply(null, arguments);
                     } catch (t) {
                         if (type !== "error") {
-                            XPE.bus.occurred("error", t);
-                            alert('Fatal: function (' +ev[cb] +') throw exception ' + t);
+                            var err ={};
+                            err.exception=t;
+                            err.caller=ev[cb];
+                            XPE.bus.occurred("error", err);
                         }
                     }
                 }
