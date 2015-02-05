@@ -88,8 +88,8 @@ X.sub("init", function() {
             okText: 'OK'
         });
     };
-    
-    X.dialog=X.error;
+
+    X.dialog = X.error;
 
     X.underConstruction = function() {
         X.error('建设中', '请已后再试。');

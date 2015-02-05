@@ -33,7 +33,7 @@ X.sub("init", function() {
             r.data = evt.target.result;
             res.push(r);
             var img = document.createElement("li");
-            img.src = r.data;
+            img.innerHTML= r.name;
             preview.appendChild(img);
         };
         reader.readAsDataURL(file);
