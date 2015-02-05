@@ -71,9 +71,23 @@ X.sub("init", function() {
     function closePopup(evt) {
         popup.style.visibility = 'hidden';
     }
-
-
+    
     function setupEditor(editor) {
+        if ("textarea"==editor.type) {
+            var newEditor = document.createElement('div');
+            editor.parentElement.insertBefore(newEditor, editor);
+            setupDiv(newEditor);
+            editor.hidden=true;
+            X.sub('doneEditing', function(evt, el) {
+               editor.value=el.innerHTML; 
+            });
+        } else {
+            setupDiv(editor);
+        }
+    }
+
+
+    function setupDiv(editor) {
         editor.classList.add('editor');
 
         editor.onclick = function(e) {
