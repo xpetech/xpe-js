@@ -1,6 +1,7 @@
 X.sub("init", function() {
 
-
+    var defaultText="<p>Edit me</p>";
+    
     var toolbarHtml =
         '<button data-cmd="bold" class="fa fa-bold"></button>' +
         '<button data-cmd="redo" class="fa fa-repeat" />' +
@@ -78,6 +79,9 @@ X.sub("init", function() {
             editor.parentElement.insertBefore(newEditor, editor);
             setupDiv(newEditor);
             editor.hidden=true;
+            if (editor.placeholder) {
+                newEditor.innerHTML='<p>'+editor.placeholder +'</p>';
+            }
             X.sub('doneEditing', function(evt, el) {
                editor.value=el.innerHTML; 
             });
@@ -113,7 +117,7 @@ X.sub("init", function() {
             return true;
         }
 
-        document.onclick = function(e) {
+        var doneEditing= function(e) {
             if (clieckOutside(e)) {
                 if (editor.editing) {
                     X.pub('doneEditing', editor);
@@ -123,10 +127,13 @@ X.sub("init", function() {
                 return;
             }
         };
+        
+        document.onclick =doneEditing;
+        document.onblur = doneEditing;
 
 
         if (editor.innerHTML.trim().length === 0) {
-            editor.innerHTML = "<p>Edit me</p>";
+            editor.innerHTML = defaultText;
         }
 
 
