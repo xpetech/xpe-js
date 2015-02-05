@@ -161,7 +161,7 @@ X.sub("init", function() {
         }
     }
 
-    var nl = document.querySelectorAll("div[data-toggle='editor']");
+    var nl = document.querySelectorAll("*[data-toggle='editor']");
     for (var i = 0; i < nl.length; ++i) {
         setupEditor(nl[i]);
     }
