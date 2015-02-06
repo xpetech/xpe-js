@@ -117,7 +117,7 @@ X.sub("init", function() {
             return true;
         }
 
-        var doneEditing= function(e) {
+        document.onclick = function(e) {
             if (clieckOutside(e)) {
                 if (editor.editing) {
                     X.pub('doneEditing', editor);
@@ -128,8 +128,12 @@ X.sub("init", function() {
             }
         };
         
-        document.onclick =doneEditing;
-        document.onblur = doneEditing;
+        editor.onblur = function(e) {
+                if (editor.editing) {
+                    X.pub('doneEditing', editor);
+                    editor.editing = false;
+                }
+        }
 
 
         if (editor.innerHTML.trim().length === 0) {
