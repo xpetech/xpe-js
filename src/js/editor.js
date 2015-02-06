@@ -2,38 +2,45 @@ X.sub("init", function() {
 
     var defaultText="<p>Edit me</p>";
     
-    var toolbarHtml =
-        '<button data-cmd="bold" class="fa fa-bold"></button>' +
-        '<button data-cmd="redo" class="fa fa-repeat" />' +
+    var toolbarHtml = function(mini) {
+        var html='';
+        html +='<button data-cmd="bold" class="fa fa-bold"></button>' ;
+        if (!mini) {
+        html +='<button data-cmd="redo" class="fa fa-repeat" />' +
         '<button data-cmd="undo"  class="fa fa-undo" />' +
-        '<button data-cmd="removeFormat"  class="fa fa-eraser" />' +
-        '<button data-cmd="italic"   class="fa fa-italic" />' +
-        '<button data-cmd="underline"   class="fa fa-underline" />' +
-        '<button data-cmd="justifyFull"  class="fa fa-align-justify" />' +
-        '<button data-cmd="justifyLeft"  class="fa fa-align-left" />' +
-        '<button data-cmd="justifyCenter"  class="fa fa-align-center" />' +
-        '<button data-cmd="justifyRight"   class="fa fa-align-right" />' +
-        '<button data-cmd="insertParagraph" class="fa fa-paragraph" />' +
-        '<button data-cmd="insertorderedlist"  class="fa fa-list-ol" />' +
-        '<button data-cmd="insertunorderedlist"  class="fa fa-list-ul" />' +
-        '<button data-cmd="outdent"  class="fa fa-outdent" />' +
-        '<button data-cmd="indent"  class="fa fa-indent" />' +
-        '<button data-cmd="insertLink"  class="fa fa-chain" />' +
-        '<button data-cmd="unlink"  class="fa fa-unlink" />' +
-        '<button data-cmd="cut"  class="fa fa-cut" />' +
-        '<button data-cmd="copy"  class="fa fa-copy" />' +
-        '<button data-cmd="paste"  class="fa fa-paste" />' +
-        '<button data-cmd="strikeThrough"  class="fa fa-strikethrough" />' +
-        '<button data-cmd="formatBlock" data-param="h2");">H2</button>' +
-        '<button data-cmd="formatBlock" data-param="h3");">H3</button>' +
-        '<button data-cmd="formatBlock" data-param="h4");">H4</button>' ;
+        '<button data-cmd="removeFormat"  class="fa fa-eraser" />' ;
+        }
+        html +='<button data-cmd="italic"   class="fa fa-italic" />' ;
+        html +='<button data-cmd="underline"   class="fa fa-underline" />' ;
+        html +='<button data-cmd="justifyFull"  class="fa fa-align-justify" />' ;
+        html +='<button data-cmd="justifyLeft"  class="fa fa-align-left" />' ;
+        html +='<button data-cmd="justifyCenter"  class="fa fa-align-center" />' ;
+        html +='<button data-cmd="justifyRight"   class="fa fa-align-right" />' ;
+        html +='<button data-cmd="insertParagraph" class="fa fa-paragraph" />' ;
+        html +='<button data-cmd="insertorderedlist"  class="fa fa-list-ol" />' ;
+        html +='<button data-cmd="insertunorderedlist"  class="fa fa-list-ul" />' ;
+        html +='<button data-cmd="outdent"  class="fa fa-outdent" />' ;
+        html +='<button data-cmd="indent"  class="fa fa-indent" />' ;
+        if (!mini) {
+            html +='<button data-cmd="insertLink"  class="fa fa-chain" />' ;
+            html +='<button data-cmd="unlink"  class="fa fa-unlink" />' ;
+            html +='<button data-cmd="cut"  class="fa fa-cut" />' ;
+        }
+        html +='<button data-cmd="copy"  class="fa fa-copy" />' ;
+        html +='<button data-cmd="paste"  class="fa fa-paste" />' ;
+        html +='<button data-cmd="strikeThrough"  class="fa fa-strikethrough" />' ;
+        html +='<button data-cmd="formatBlock" data-param="h2");">H2</button>' ;
+        html +='<button data-cmd="formatBlock" data-param="h3");">H3</button>' ;
+        html +='<button data-cmd="formatBlock" data-param="h4");">H4</button>' ;
+        return html;
+    }
 
 
     var toolbar = X(document.createElement('div'));
 
-    (function() {
+    var makeToolbar = function(mini) {
         toolbar.id = 'toolbar';
-        toolbar.innerHTML = toolbarHtml;
+        toolbar.innerHTML = toolbarHtml(mini);
         document.body.appendChild(toolbar);
         toolbar.css('display', 'none');
 
@@ -50,8 +57,9 @@ X.sub("init", function() {
             };
         }
 
-    }());
+    };
 
+    makeToolbar(false);
 
     var popup = document.createElement('div');
     popup.id = 'popup';
@@ -75,6 +83,7 @@ X.sub("init", function() {
     
     function setupEditor(editor) {
         if ("textarea"==editor.type) {
+            makeToolbar(true);
             var newEditor = document.createElement('div');
             editor.parentElement.insertBefore(newEditor, editor);
             editor.parentElement.insertBefore(toolbar, newEditor);
