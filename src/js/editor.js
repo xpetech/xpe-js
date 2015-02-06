@@ -77,6 +77,8 @@ X.sub("init", function() {
         if ("textarea"==editor.type) {
             var newEditor = document.createElement('div');
             editor.parentElement.insertBefore(newEditor, editor);
+            editor.parentElement.insertBefore(toolbar, newEditor);
+            newEditor.firsttime=true;
             setupDiv(newEditor);
             editor.hidden=true;
             if (editor.placeholder) {
@@ -98,6 +100,10 @@ X.sub("init", function() {
             e.preventDefault();
             editor.editing = true;
             editor.setAttribute('contenteditable', true);
+            if (editor.firsttime) {
+                editor.innerHTML="";
+                editor.firsttime=false;
+            }
             toolbar.css('position', 'absolute');
             toolbar.css('display', 'block');
             toolbar.css('top', (editor.offsetTop - toolbar.offsetHeight - 5) + 'px');
