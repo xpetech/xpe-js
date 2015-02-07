@@ -1,45 +1,45 @@
 X.sub("init", function() {
 
-    var defaultText="<p>Edit me</p>";
-    
+    var defaultText = "<p>Edit me</p>";
+
     var toolbarHtml = function(mini) {
-        var html='';
-        html +='<button data-cmd="bold" class="fa fa-bold"></button>' ;
+        var html = '';
+        html += '<button data-cmd="bold" class="fa fa-bold"></button>';
         if (!mini) {
-        html +='<button data-cmd="redo" class="fa fa-repeat" />' +
-        '<button data-cmd="undo"  class="fa fa-undo" />' +
-        '<button data-cmd="removeFormat"  class="fa fa-eraser" />' ;
+            html += '<button data-cmd="redo" class="fa fa-repeat" />' +
+                '<button data-cmd="undo"  class="fa fa-undo" />' +
+                '<button data-cmd="removeFormat"  class="fa fa-eraser" />';
         }
-        html +='<button data-cmd="italic"   class="fa fa-italic" />' ;
-        html +='<button data-cmd="underline"   class="fa fa-underline" />' ;
-        html +='<button data-cmd="justifyFull"  class="fa fa-align-justify" />' ;
-        html +='<button data-cmd="justifyLeft"  class="fa fa-align-left" />' ;
-        html +='<button data-cmd="justifyCenter"  class="fa fa-align-center" />' ;
-        html +='<button data-cmd="justifyRight"   class="fa fa-align-right" />' ;
-        html +='<button data-cmd="insertParagraph" class="fa fa-paragraph" />' ;
-        html +='<button data-cmd="insertorderedlist"  class="fa fa-list-ol" />' ;
-        html +='<button data-cmd="insertunorderedlist"  class="fa fa-list-ul" />' ;
-        html +='<button data-cmd="outdent"  class="fa fa-outdent" />' ;
-        html +='<button data-cmd="indent"  class="fa fa-indent" />' ;
+        html += '<button data-cmd="italic"   class="fa fa-italic" />';
+        html += '<button data-cmd="underline"   class="fa fa-underline" />';
+        html += '<button data-cmd="justifyFull"  class="fa fa-align-justify" />';
+        html += '<button data-cmd="justifyLeft"  class="fa fa-align-left" />';
+        html += '<button data-cmd="justifyCenter"  class="fa fa-align-center" />';
+        html += '<button data-cmd="justifyRight"   class="fa fa-align-right" />';
+        html += '<button data-cmd="insertParagraph" class="fa fa-paragraph" />';
+        html += '<button data-cmd="insertorderedlist"  class="fa fa-list-ol" />';
+        html += '<button data-cmd="insertunorderedlist"  class="fa fa-list-ul" />';
+        html += '<button data-cmd="outdent"  class="fa fa-outdent" />';
+        html += '<button data-cmd="indent"  class="fa fa-indent" />';
         if (!mini) {
-            html +='<button data-cmd="insertLink"  class="fa fa-chain" />' ;
-            html +='<button data-cmd="unlink"  class="fa fa-unlink" />' ;
-            html +='<button data-cmd="cut"  class="fa fa-cut" />' ;
+            html += '<button data-cmd="insertLink"  class="fa fa-chain" />';
+            html += '<button data-cmd="unlink"  class="fa fa-unlink" />';
+            html += '<button data-cmd="cut"  class="fa fa-cut" />';
         }
-        html +='<button data-cmd="copy"  class="fa fa-copy" />' ;
-        html +='<button data-cmd="paste"  class="fa fa-paste" />' ;
-        html +='<button data-cmd="strikeThrough"  class="fa fa-strikethrough" />' ;
-        html +='<button data-cmd="formatBlock" data-param="h2");">H2</button>' ;
-        html +='<button data-cmd="formatBlock" data-param="h3");">H3</button>' ;
-        html +='<button data-cmd="formatBlock" data-param="h4");">H4</button>' ;
+        html += '<button data-cmd="copy"  class="fa fa-copy" />';
+        html += '<button data-cmd="paste"  class="fa fa-paste" />';
+        html += '<button data-cmd="strikeThrough"  class="fa fa-strikethrough" />';
+        html += '<button data-cmd="formatBlock" data-param="h2");">H2</button>';
+        html += '<button data-cmd="formatBlock" data-param="h3");">H3</button>';
+        html += '<button data-cmd="formatBlock" data-param="h4");">H4</button>';
         return html;
-    }
+    };
 
 
-    var toolbar = X(document.createElement('div'));
 
     var makeToolbar = function(mini) {
-        toolbar.id = 'toolbar';
+        var toolbar = X(document.createElement('div'));
+        toolbar.className = 'toolbar';
         toolbar.innerHTML = toolbarHtml(mini);
         document.body.appendChild(toolbar);
         toolbar.css('display', 'none');
@@ -57,9 +57,10 @@ X.sub("init", function() {
             };
         }
 
+        return toolbar;
+
     };
 
-    makeToolbar(false);
 
     var popup = document.createElement('div');
     popup.id = 'popup';
@@ -80,22 +81,37 @@ X.sub("init", function() {
     function closePopup(evt) {
         popup.style.visibility = 'hidden';
     }
-    
+
     function setupEditor(editor) {
-        if ("textarea"==editor.type) {
+        if ("textarea" == editor.type) {
             makeToolbar(true);
             var newEditor = document.createElement('div');
             editor.parentElement.insertBefore(newEditor, editor);
-            editor.parentElement.insertBefore(toolbar, newEditor);
-            newEditor.firsttime=true;
+            newEditor.minToolbar = true;
             setupDiv(newEditor);
-            editor.hidden=true;
-            if (editor.placeholder) {
-                newEditor.innerHTML='<p>'+editor.placeholder +'</p>';
+            editor.hidden = true;
+            if (editor.value && editor.value.length > 0) {
+                newEditor.innerHTML = editor.value;
+            } else if (editor.placeholder) {
+                newEditor.firsttime = true;
+                newEditor.innerHTML = '<p>' + editor.placeholder + '</p>';
             }
-            X.sub('doneEditing', function(evt, el) {
-               editor.value=el.innerHTML; 
+
+            editor.addEventListener('change', function() {
+                newEditor.innerHTML = editor.value;
+                newEditor.firsttime = false;
             });
+            
+            //whenever the editable div is updated, we update the original form field value
+            newEditor.addEventListener("input", function() {
+                editor.value = newEditor.innerHTML;
+            }, false);
+            
+            newEditor.onblur = function() {
+                editor.value = newEditor.innerHTML;
+            };
+
+            
         } else {
             setupDiv(editor);
         }
@@ -103,15 +119,22 @@ X.sub("init", function() {
 
 
     function setupDiv(editor) {
+        var toolbar;
         editor.classList.add('editor');
+
 
         editor.onclick = function(e) {
             e.preventDefault();
             editor.editing = true;
             editor.setAttribute('contenteditable', true);
             if (editor.firsttime) {
-                editor.innerHTML="";
-                editor.firsttime=false;
+                editor.innerHTML = "";
+                editor.firsttime = false;
+            }
+
+            if (!toolbar) {
+                toolbar = makeToolbar(editor.minToolbar);
+                editor.parentElement.insertBefore(toolbar, editor);
             }
             toolbar.css('position', 'absolute');
             toolbar.css('display', 'block');
@@ -132,23 +155,18 @@ X.sub("init", function() {
             return true;
         }
 
-        document.onclick = function(e) {
+        document.addEventListener('click', function(e) {
             if (clieckOutside(e)) {
                 if (editor.editing) {
                     X.pub('doneEditing', editor);
                     editor.editing = false;
                 }
-                toolbar.css('display', 'none');
+                if (toolbar) {
+                    toolbar.css('display', 'none');
+                }
                 return;
             }
-        };
-        
-        editor.onblur = function(e) {
-                if (editor.editing) {
-                    X.pub('doneEditing', editor);
-                    editor.editing = false;
-                }
-        }
+        });
 
 
         if (editor.innerHTML.trim().length === 0) {
