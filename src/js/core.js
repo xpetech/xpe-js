@@ -133,6 +133,13 @@ XPE.ajax = function() {
 		queue.enque(request);
 		handleNext();
 	}
+	
+	function onSend(request) {
+		request.type = "SEND";
+		queue.enque(request);
+		handleNext();
+	}
+	
 
 	function onPut(uri, body, callBack, onError) {
 		var request = {};
@@ -184,7 +191,7 @@ XPE.ajax = function() {
           var ct=request.ct||'application/json';
           httpRequest.setRequestHeader('Content-Type',ct);
           if (request.body) {
-              if (typeof(request.body)==="string") {
+              if (typeof(request.body)==="string" ) {
                 httpRequest.send(request.body);
               } else {
                 httpRequest.send(JSON.stringify(request.body));
@@ -195,6 +202,9 @@ XPE.ajax = function() {
         } else if (request.type==="DELETE") {
             httpRequest.open('DELETE', request.uri);
             httpRequest.send(null);
+        } else if (request.type==="SEND") {
+            httpRequest.open(request.method, request.uri);
+            httpRequest.send(request.body);
         }
       X.pub('ajaxRequestSent',request);
     }
@@ -206,7 +216,8 @@ XPE.ajax = function() {
         get : onGet,
         post : onPost,
         del: onDel,
-        put: onPut
+        put: onPut,
+        send: onSend
     };
 
 }();
@@ -215,6 +226,7 @@ X.get=XPE.ajax.get;
 X.post=XPE.ajax.post;
 X.put=XPE.ajax.put;
 X.del=XPE.ajax.del;
+X.send=XPE.ajax.send;
 
 function Queue() {
   var queue = [];
